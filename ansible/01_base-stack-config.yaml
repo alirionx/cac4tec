@@ -1,0 +1,69 @@
+#Apply via: ansible-playbook -i ./inventory.yaml --become 01_base-stack-config.yaml
+
+#---------------------------------------------------------------
+# - name: Crazy Things from Terraform
+#   hosts: localhost
+#   tasks:
+#     - name: Display terraform output as JSON content
+#       shell: terraform output -json
+#       args:
+#         chdir: ../terraform/
+#       register: jsonIn
+
+#     - name: save the Json data to a Variable as a Fact
+#       set_fact:
+#         ObjIn: "{{ jsonIn.stdout | from_json }}"
+    
+#     - name: Get public IP config data
+#       set_fact:
+#         pupIpObj: "{{ObjIn['public_ips']['value']}}"
+
+#     - debug: 
+#         msg: "{{pupIpObj[item].public_ip}}" 
+#       with_items: "{{ pupIpObj }}"
+
+#---------------------------------------------------------------
+- name: General OS Config 
+  hosts: stack
+  tasks:
+    - name: Set Timezone
+      command: timedatectl set-timezone Europe/Berlin
+
+    - name: update apt repo package lists
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Create hosts file from J2 Template
+      template:
+        src: ./config_templates/hosts.template
+        dest: /etc/hosts
+
+#---------------------------------------------------------------
+- name: Install OS Tools
+  hosts: stack
+  tasks:
+    - name: Install NFS Common 
+      apt:
+        pkg:
+          - nfs-common
+          - gunicorn
+
+    - name: Create NFS folder
+      ansible.builtin.file:
+        path: /var/www/html/shared
+        state: directory
+        mode: '0755'
+        owner: www-data
+        group: www-data
+      
+    - name: Mount the NFS volume
+      mount:
+        src: "{{nfs_endpoint}}:/"
+        path: "{{nfs_tgt}}"
+        opts: rw,sync,hard,intr
+        state: mounted
+        fstype: nfs4
+        #opts: defaults
+        dump: "0"
+        passno: "0"
+
+#---------------------------------------------------------------

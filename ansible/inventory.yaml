@@ -1,0 +1,25 @@
+all:
+  vars:
+    dev_domain: cac4tec.dev
+    nfs_endpoint: anyIP
+    nfs_tgt: "/var/www/html/shared/"
+    webapp_port: "80"
+
+    
+  hosts:
+    web1:
+      ansible_host: anyIP
+      ip: anyIP
+    web2:
+      ansible_host: anyIP
+      ip: anyIP
+    web3:
+      ansible_host: anyIP
+      ip: anyIP
+    
+  children:
+    stack:
+      hosts:
+        web1:
+        web2:
+        web3:

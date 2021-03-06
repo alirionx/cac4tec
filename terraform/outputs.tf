@@ -25,3 +25,6 @@ output "public_ips" {
 output "efs_connect_ip" {
   value = [ aws_efs_mount_target.efs_mt_web.ip_address ]
 }
+output "lb" {
+  value = [ aws_lb.cac4teclb.dns_name ]
+}

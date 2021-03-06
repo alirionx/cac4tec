@@ -1,0 +1,41 @@
+#Apply via: ansible-playbook -i ./inventory.yaml --become 02_webapp-config.yaml
+
+#---------------------------------------------------------------
+- name: WebApp Config 
+  hosts: stack
+  tasks:
+    - name: Install python3 and pip
+      apt:
+        pkg: 
+          - python3
+          - python3-pip
+
+    - name: Install python3 and pip
+      pip:
+        name:
+          - flask
+          - flask_cors
+
+- name: WebApp Copy 
+  hosts: web1 # Nur auf einen Host weil wegen Ccentral Storage
+  tasks: 
+    - name: Copy WebApp to Web Servers
+      copy:
+        src: ../webapp/
+        dest: "{{nfs_tgt}}/"
+
+- name: WebApp Config 
+  hosts: stack
+  tasks:
+    - name: Copy Systemd Service Conf File
+      template:
+        src: ./config_templates/webapp.service.template
+        dest: /etc/systemd/system/webapp.service
+
+    - name: Enable Systemd Service
+      systemd:
+        enabled: yes
+        state: restarted
+        name: webapp.service
+
+#---------------------------------------------------------------

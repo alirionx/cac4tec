@@ -1,0 +1,11 @@
+[Unit]
+Description=Example WebApp - Cac4Tec
+
+[Service]
+Type=simple
+WorkingDirectory={{nfs_tgt}}
+ExecStart=gunicorn --bind 0.0.0.0:{{webapp_port}} webapp:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
