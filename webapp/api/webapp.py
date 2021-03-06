@@ -61,6 +61,97 @@ def api_mashes_get():
   resObj["status"] = status
 
   return jsonify(resObj), 200
+
+#------------------------------------------
+@app.route('/api/mash', methods=['PUT'])
+def api_mashes_change():
+  status = 200
+  resObj = {
+    "path": "/api/mash",
+    "method": "PUT",
+    "msg": "",
+  }
+
+  objIn = request.get_json()
+  if "id" not in objIn:
+    status = 404
+    resObj["msg"] = "id is missing" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+  else:
+    curId = objIn["id"]
+    del objIn["id"]
+  
+  keyAry = []
+  valAry = []
+  updateAry = []
+  for key, val in objIn.items():
+    keyAry.append(key)
+    valAry.append(val)
+    updateAry.append(" %s = '%s' " %(key, val) )
+
+  updateStr = ", ".join(updateAry) 
+
+  myDbTool = db_tool()
+  sqlRes = myDbTool.execute_update("UPDATE mashes SET %s WHERE id = %s ;" %(updateStr, curId))
+  if sqlRes == 0:
+    status = 500
+    resObj["msg"] = "something went wrong" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  resObj["status"] = status
+  return jsonify(resObj), status
+
+#----------------------------------------------
+
+@app.route('/api/mash', methods=['POST'])
+def api_mashes_add():
+  status = 200
+  resObj = {
+    "path": "/api/mash",
+    "method": "POST",
+    "msg": "",
+  }
+
+  objIn = request.get_json()
+  
+  myDbTool = db_tool()
+  sqlRes = myDbTool.execute_insert("mashes", objIn)
+  if sqlRes == 0:
+    status = 500
+    resObj["msg"] = "something went wrong" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  resObj["status"] = status
+  return jsonify(resObj), status
+
+#----------------------------------------------
+@app.route('/api/mash/<curId>', methods=['DELETE'])
+def api_mashes_delete(curId):
+  status = 200
+  resObj = {
+    "path": "/api/mash/%s" %curId,
+    "method": "DELETE",
+    "msg": "",
+  }
+
+  myDbTool = db_tool()
+  sqlRes = myDbTool.execute_delete("DELETE FROM pics WHERE mash = %s ;" %int(curId) )
+
+  sqlRes = myDbTool.execute_delete("DELETE FROM mashes WHERE id = %s ;" %int(curId) )
+  if sqlRes == 0:
+    status = 404
+    resObj["msg"] = "mash not found" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  resObj["status"] = status
+  return jsonify(resObj), status
+
+
+
 #----------------------------------------------
 
 

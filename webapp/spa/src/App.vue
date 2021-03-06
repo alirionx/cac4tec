@@ -53,6 +53,7 @@ body {
   text-align: center;
   padding: 40px;
   *background-color: #000;
+  z-index: 10;
 }
 .headBlock .hl{
   font-size: 24px;
@@ -104,5 +105,108 @@ body {
 }
 .stdTbl td:last-child{
   text-align: center;
+}
+.stdTbl .noBorders td{
+  border: none;
+  box-shadow: none;
+}
+.stdTbl button{
+  min-width: 50px;
+  margin: 10px -6px -6px -6px;
+  background-color: #444;
+  color:#fff;
+  text-align:center;
+  font-size:15px;
+  padding:3px;
+  border: none;
+  box-shadow: 1px 1px #fff;
+  cursor:pointer;
+  font-family: 'Courier New', Courier, monospace;
+}
+.stdTbl button:hover{
+  background-color: #333;
+}
+
+.blocker{
+  position: fixed;
+  top:0px;
+  left:0px;
+  width:100%;
+  height: 100vh;
+  z-index: 2;
+  background-image: linear-gradient(#cfcfcf 100%, #bbb 100%);
+  background-repeat: no-repeat;
+}
+
+.stdForm{
+  display: table;
+  margin: 18vh auto auto auto;
+  min-width:500px;
+  min-height:100px;
+  text-align:left;
+  padding:14px;
+  border: 1.5px solid #444;
+  *border-radius: 12px;
+  box-shadow: 1px 1px #fff;
+  *background-color:#bbb;
+}
+.stdForm .hl{
+  background-color: #444;
+  color:#fff;
+  text-align:center;
+  font-size:14px;
+  font-weight:bold;
+  padding:8px;
+  *border-radius: 6px;
+  *border: 1px solid rgb(2, 22, 2);
+  box-shadow: 1px 1px #fff;
+  margin:auto auto 6px auto;
+}
+.stdForm .iptHl{
+  text-align: left;
+  font-size:14px;
+  font-weight:bold;
+  color: #000;
+  padding:18px 8px 4px 2px;
+}
+.stdForm input[type=text],input[type=password]{
+  text-align: left;
+  font-size:16px;
+  color: #000;
+  padding:6px;
+  margin: 0px 0px 8px 2px;
+  border: 1px solid #777;
+  background-color:#eee;
+  font-family: 'Courier New', Courier, monospace;
+  box-shadow: 1px 1px #fff;
+  width:95%;
+  font-weight: 900;
+}
+.stdForm input[type=text]:focus,input[type=password]:focus{
+  background-color: #f8f8f8;
+}
+.stdForm input[type=text][disabled]{
+  background-color:#ccc;
+}
+.stdForm .btnFrame{
+  text-align: center;
+  padding:26px 0px 2px 0px;
+}
+.stdForm .btnFrame button{
+  min-width:120px;
+  background-color: #444;
+  color:#fff;
+  text-align:center;
+  font-size:18px;
+  padding:5px;
+  margin: auto 12px auto 12px;
+  *border-radius: 8px;
+  border: none;
+  box-shadow: 1px 1px #fff;
+  cursor:pointer;
+  font-family: 'Courier New', Courier, monospace;
+}
+.stdForm .btnFrame button:hover{
+  background-color: #333;
 }
 </style>

@@ -7,7 +7,7 @@
     </div>
 
     <div class="actFrame" v-if="idx==active_mash">
-      <div v-for="(act, actidx) in actDefi" :key="actidx" v-on:click="act.fw(idx)">{{act.txt}}</div>
+      <div v-for="(act, actidx) in actDefi" :key="actidx" v-on:click="act.fw(idx)"> - {{act.txt}}</div>
     </div>
   </div>
 </template>
@@ -68,11 +68,11 @@ export default {
   min-width: 100px;
 }
 .ActionMenu .actFrame div{
-  padding:4px;
+  padding:3px 0px 3px 6px;
   text-align: left;
   background-color: #444;
   color: #fff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: normal;
   text-shadow: none;
   white-space: nowrap;

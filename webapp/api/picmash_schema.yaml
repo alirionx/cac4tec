@@ -10,6 +10,16 @@ tables:
         PRIMARY KEY("id" AUTOINCREMENT)
       );
 
+  - name: pics
+    query: |
+      CREATE TABLE "pics" (
+        "id" INTEGER NOT NULL UNIQUE,
+        "added" TEXT,
+        "mash" INTEGER NOT NULL,
+        PRIMARY KEY("id" AUTOINCREMENT),
+        FOREIGN KEY("mash") REFERENCES "mashes"("id")
+      );
+
   - name: pwd
     query: |
       CREATE TABLE "pwd" (
