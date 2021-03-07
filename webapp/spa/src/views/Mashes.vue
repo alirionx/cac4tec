@@ -1,9 +1,12 @@
 <template>
   <div class="Mashes">
-    <select v-on:change="call_mash" v-model="selected_mash" v-if="mashes.length>0">
-      <option v-if="selected_mash==null" value="null">Please select a mash</option>
-      <option v-for="(mash, idx) in mashes" :key="idx" :value="idx">{{mash.name}}</option>
-    </select>
+    <div>
+      <select v-on:change="call_mash" v-model="selected_mash" v-if="mashes.length>0">
+        <option v-if="selected_mash==null" value="null">Please select a mash</option>
+        <option v-for="(mash, idx) in mashes" :key="idx" :value="idx">{{mash.name}}</option>
+      </select>
+      <button class="sideBtn" v-if="selected_mash!=null" v-on:click="call_rating">show rating</button>
+    </div>
     <div class="mashDesc" v-if="selected_mash!=null">{{selected_mash_desc}}</div>
   </div>
 </template>
@@ -41,6 +44,10 @@ export default {
       console.log(this.selected_mash + " calling...")
     },
 
+    call_rating(){
+      location.hash = "/pics/"+this.mashes[this.selected_mash].id
+    }
+
   },
   
   created: function(){
@@ -71,5 +78,22 @@ select{
   color:#333;
   text-shadow: 1px 1px #fff;
   font-weight: bold;
+}
+.sideBtn{
+  min-width:130px;
+  background-color: #444;
+  color:#fff;
+  text-align:center;
+  font-size:16px;
+  padding:7px;
+  margin: auto auto auto 12px;
+  *border-radius: 8px;
+  border: none;
+  box-shadow: 1px 1px #fff;
+  cursor:pointer;
+  font-family: 'Courier New', Courier, monospace;
+}
+.sideBtn:hover{
+  background-color: #333;
 }
 </style>

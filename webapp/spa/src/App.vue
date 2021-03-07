@@ -49,9 +49,9 @@ body {
   position: fixed;
   top: 0px;
   left: 0px;
-  width: 95%;
+  width: 96%;
   text-align: center;
-  padding: 40px;
+  padding: 30px;
   *background-color: #000;
   z-index: 10;
 }

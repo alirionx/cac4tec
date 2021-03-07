@@ -11,3 +11,5 @@ dbFilePath = os.path.join(curDir, dbFileName)
 
 picFolder = "pics/"
 picFolderPath = os.path.join(curDir, picFolder)
+allowedMime = ["jpg", "jpeg", "png"]
+pixelLimit = 600

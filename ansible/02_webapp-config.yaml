@@ -15,6 +15,7 @@
         name:
           - flask
           - flask_cors
+          - Pillow
 
 - name: WebApp Copy 
   hosts: web1 # Nur auf einen Host weil wegen Ccentral Storage

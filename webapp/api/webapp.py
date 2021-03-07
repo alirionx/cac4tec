@@ -9,7 +9,7 @@ import socket
 from flask import Flask, request, session, redirect, jsonify 
 from flask_cors import CORS
 
-from tools import helpers, db_tool
+from tools import helpers, db_tool, pics
 
 #-Global Vars------------------------------------------------------
 #curPath = os.path.dirname(os.path.abspath(__file__))
@@ -22,6 +22,16 @@ app = Flask(__name__, static_url_path='', static_folder='dist' )
 app.secret_key = "changeit"
 app.debug = True
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+#-App Pre Checks---------------------------------------------------
+@app.before_first_request
+def app_ready_check():
+  myHelpers = helpers()
+  myHelpers.app_ready_check()
+
+@app.before_request
+def set_adm_session():
+  session["admin"] = True
 
 #-The APP Request Handler Area-------------------------------------
 @app.route('/', methods=['GET'])
@@ -150,6 +160,73 @@ def api_mashes_delete(curId):
   resObj["status"] = status
   return jsonify(resObj), status
 
+
+#----------------------------------------------
+@app.route('/api/pics/<mashId>', methods=['GET'])
+def api_pics_get(mashId):
+  status = 200
+  resObj = {
+    "path": "/api/mash/%s" %mashId,
+    "method": "GET",
+    "msg": "",
+  }
+
+  picAry = []
+  myDbTool = db_tool()
+  sqlRes = myDbTool.execute_select("SELECT * FROM pics WHERE mash = %s;" %int(mashId) )
+  for row in sqlRes:
+    won = int(row["won"])
+    loss = int(row["loss"])
+    if won == 0 and loss == 0:
+      rate = '50%'
+    elif won == 0:
+      rate = '0%'
+    elif loss == 0:
+      rate = '100%'
+    else:
+      rate = won/(won+loss)
+    
+    row["rate"] = rate
+    picAry.append(row)
+
+  resObj["data"] = picAry
+  
+  if "admin" in session:
+     resObj["admin"] = True
+  else:
+    resObj["admin"] = False
+  
+  resObj["status"] = status
+  return jsonify(resObj), status
+
+#----------------------------------------------
+@app.route('/api/pics/<mashId>', methods=['POST'])
+def api_pics_upload(mashId):
+  status = 200
+  resObj = {
+    "path": "/api/mash/%s" %mashId,
+    "method": "POST",
+    "msg": "",
+  }
+
+  try:
+    fileAry = request.files.getlist("file")
+  except Exception as e:
+    print(e)
+    status = 500
+    resObj["msg"] = "did you added files??" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  myPics = pics()
+  for file in fileAry:
+    print('processing: '+ file.filename)
+    myPics.insert_pic(mashId, file)
+
+    #file.save(os.path.join(picFolderPath, file.filename))
+
+  resObj["status"] = status
+  return jsonify(resObj), status
 
 
 #----------------------------------------------
