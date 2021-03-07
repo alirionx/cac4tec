@@ -42,7 +42,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  padding: 80px 8px 8px 8px;
+  padding: 100px 8px 8px 8px;
   min-height:80vh;
 }
 .headBlock{
@@ -52,7 +52,9 @@ body {
   width: 96%;
   text-align: center;
   padding: 30px;
-  *background-color: #000;
+  background-color: #ccc;
+  box-shadow: 0px 3px 6px #555;
+  border: 1px solid #444;
   z-index: 10;
 }
 .headBlock .hl{
@@ -65,8 +67,8 @@ body {
 }
 .headBlock .gear{
   position: absolute;
-  right:60px;
-  top:32px;
+  right:50px;
+  top:24px;
   height: 40px;
   cursor: pointer;
 }

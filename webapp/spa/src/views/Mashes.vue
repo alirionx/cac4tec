@@ -1,13 +1,13 @@
 <template>
   <div class="Mashes">
-    <div>
+    <div class="selectFrame">
       <select v-on:change="call_mash" v-model="selected_mash" v-if="mashes.length>0">
         <option v-if="selected_mash==null" value="null">Please select a mash</option>
         <option v-for="(mash, idx) in mashes" :key="idx" :value="idx">{{mash.name}}</option>
       </select>
       <button class="sideBtn" v-if="selected_mash!=null" v-on:click="call_rating">show rating</button>
-    </div>
-    <div class="mashDesc" v-if="selected_mash!=null">{{selected_mash_desc}}</div>
+      <div class="mashDesc" v-if="selected_mash!=null">{{selected_mash_desc}}</div>
+    </div>  
   </div>
 </template>
 
@@ -61,7 +61,11 @@ export default {
 
 
 <style scoped>
-select{
+.selectFrame{
+  text-align: center;
+  margin: 10px auto auto auto;
+}
+.selectFrame select{
   padding:6px;
   min-width: 280px;
   background-color: #444;
@@ -70,7 +74,7 @@ select{
   font-size: 16px;
   box-shadow: 1px 1px #fff;
 }
-.mashDesc{
+.selectFrame .mashDesc{
   display: table;
   margin: auto;
   padding:12px;
@@ -79,7 +83,7 @@ select{
   text-shadow: 1px 1px #fff;
   font-weight: bold;
 }
-.sideBtn{
+.selectFrame .sideBtn{
   min-width:130px;
   background-color: #444;
   color:#fff;
@@ -93,7 +97,7 @@ select{
   cursor:pointer;
   font-family: 'Courier New', Courier, monospace;
 }
-.sideBtn:hover{
+.selectFrame .sideBtn:hover{
   background-color: #333;
 }
 </style>
