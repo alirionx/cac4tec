@@ -289,7 +289,7 @@ def api_rate():
   }
   
   rateIn = request.get_json()
-  print(rateIn)
+  #print(rateIn)
   myPics = pics()
   res = myPics.rate_mash(rateIn)
 
@@ -416,25 +416,10 @@ def api_pics_get(mashId):
   
   resObj["mash"] = sqlRes[0]
 
-  picAry = []
-  sqlRes = myDbTool.execute_select("SELECT * FROM pics WHERE mash = %s;" %int(mashId) )
-  for row in sqlRes:
-    won = int(row["won"])
-    loss = int(row["loss"])
-    if won == 0 and loss == 0:
-      rate = 50
-    elif won == 0:
-      rate = 0
-    elif loss == 0:
-      rate = 100
-    else:
-      rate = round( won/(won+loss)*100 ) 
-    
-    row["rate"] = str(rate) + '%'
-    row["rateNmb"] = rate
-    picAry.append(row)
+  myPics = pics()
+  picAry = myPics.call_mash_pics(mashId)
 
-  srtPicAry = sorted(picAry, key=lambda k: k['rateNmb'], reverse=True) #UIUIUIUIUIUIUIUIUI
+  srtPicAry = sorted(picAry, key=lambda k: k['ratioNmb'], reverse=True) #UIUIUIUIUIUIUIUIUI
   resObj["data"] = srtPicAry
   
   if "admin" in session:

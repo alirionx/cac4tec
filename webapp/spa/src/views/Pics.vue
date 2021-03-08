@@ -85,17 +85,27 @@ export default {
         },
         {
           col: "won",
-          hl: "Won",
+          hl: "Wons",
           align: "center"
         },
         {
           col: "loss",
-          hl: "Loss",
+          hl: "Losses",
           align: "center"
         },
         {
-          col: "rate",
-          hl: "Rating",
+          col: "wonrate",
+          hl: "W-Rate",
+          align: "center"
+        },
+        {
+          col: "lossrate",
+          hl: "L-Rate",
+          align: "center"
+        },
+        {
+          col: "ratio",
+          hl: "Ratio",
           align: "center"
         }
       ],
@@ -226,6 +236,7 @@ export default {
   padding:8px;
   font-size: 18px;
   font-weight: bold;
+  text-shadow: 1px 1px #fff;
 }
 .picUpload .uploadList{
   display: table;

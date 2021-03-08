@@ -21,6 +21,8 @@ tables:
         "mash" INTEGER NOT NULL,
         "won"	INTEGER DEFAULT 0,
         "loss"	INTEGER DEFAULT 0,
+        "wonrate"	INTEGER DEFAULT 0,
+        "lossrate"	INTEGER DEFAULT 0,
         PRIMARY KEY("id" AUTOINCREMENT),
         FOREIGN KEY("mash") REFERENCES "mashes"("id")
       );

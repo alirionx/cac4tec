@@ -121,14 +121,14 @@ body {
 }
 
 .stdTbl{
-  margin: 30px auto 30px auto;
+  margin: 20px auto 30px auto;
   min-width: 800px;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 20px;
+  font-size: 18px;
   *font-weight: 900;
 }
 .stdTbl th{
-  padding:6px;
+  padding:6px 8px 6px 8px;
   background-color: #444;
   color:#fff;
   box-shadow: 1px 1px #fff;
@@ -162,7 +162,7 @@ body {
 }
 .stdTbl button{
   min-width: 50px;
-  margin: -6px;
+  margin: -6px 2px -6px 2px;
   background-color: #444;
   color:#fff;
   text-align:center;
