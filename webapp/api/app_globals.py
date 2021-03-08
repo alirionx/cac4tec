@@ -9,7 +9,10 @@ schemaFilePath = os.path.join(curDir, schemaFileName)
 dbFileName = 'picmash.db'
 dbFilePath = os.path.join(curDir, dbFileName)
 
-picFolder = "pics/"
+staticPath = "dist/"
+picFolderName = "pics"
+picFolder = "dist/%s/" %picFolderName
 picFolderPath = os.path.join(curDir, picFolder)
 allowedMime = ["jpg", "jpeg", "png"]
 pixelLimit = 600
+thumbPixelLimit = 80

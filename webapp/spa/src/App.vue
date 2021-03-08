@@ -53,7 +53,7 @@ body {
   text-align: center;
   padding: 30px;
   background-color: #ccc;
-  box-shadow: 0px 3px 6px #555;
+  box-shadow: 0px 2px 4px #555;
   border: 1px solid #444;
   z-index: 10;
 }
@@ -79,8 +79,16 @@ body {
   border-bottom: #333 2px solid;
 }
 
+.pageHl{
+  padding:10px;
+  font-size: 22px;
+  color:#333;
+  text-shadow: 1px 1px #fff;
+  *font-weight: bold;
+}
+
 .stdTbl{
-  margin: 30px auto auto auto;
+  margin: 30px auto 30px auto;
   min-width: 800px;
   font-family: 'Courier New', Courier, monospace;
   font-size: 20px;
@@ -105,16 +113,23 @@ body {
   border: 1px solid #444;
   box-shadow: 1px 1px #fff;
 }
+.stdTbl td img{
+  margin:-4px;
+  max-height: 50px;
+  cursor: pointer;
+  box-shadow: 1px 1px #fff;
+}
 .stdTbl td:last-child{
   text-align: center;
 }
 .stdTbl .noBorders td{
   border: none;
   box-shadow: none;
+  height: 40px;
 }
 .stdTbl button{
   min-width: 50px;
-  margin: 10px -6px -6px -6px;
+  margin: -6px;
   background-color: #444;
   color:#fff;
   text-align:center;

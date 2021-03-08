@@ -1,13 +1,23 @@
 <template>
   <div class="Mashes">
+    
+    <div class="pageHl" v-if="mashes.length==0">No mashes available</div>
+
     <div class="selectFrame">
-      <select v-on:change="call_mash" v-model="selected_mash" v-if="mashes.length>0">
+      <select v-on:change="call_pics" v-model="selected_mash" v-if="mashes.length>0">
         <option v-if="selected_mash==null" value="null">Please select a mash</option>
         <option v-for="(mash, idx) in mashes" :key="idx" :value="idx">{{mash.name}}</option>
       </select>
       <button class="sideBtn" v-if="selected_mash!=null" v-on:click="call_rating">show rating</button>
       <div class="mashDesc" v-if="selected_mash!=null">{{selected_mash_desc}}</div>
     </div>  
+
+    <table class="mashFrame" v-if="selected_mash!=null"><tr>
+      <td v-for="(pic, idx) in data" :key="idx">
+        <img :src="pic.imagepath" v-on:click="rate_pic(idx)" />
+      </td>
+    </tr></table>
+
   </div>
 </template>
 
@@ -24,6 +34,7 @@ export default {
   data(){
     return{
       mashes: [],
+      data: [],
       selected_mash: null,
       selected_mash_desc: ""
     }
@@ -39,13 +50,41 @@ export default {
       });
     },
     
-    call_mash(){
+    call_pics(){
       this.selected_mash_desc = this.mashes[this.selected_mash].description;
-      console.log(this.selected_mash + " calling...")
+    
+      axios.get("/api/rate/"+this.mashes[this.selected_mash].id).then(response => { 
+        console.log(response.data);
+        this.data = response.data.data;
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
     },
 
     call_rating(){
       location.hash = "/pics/"+this.mashes[this.selected_mash].id
+    },
+
+    rate_pic(idx){
+      let wonPicId = this.data[idx].id;
+      let tmpAry = this.data.slice();
+      tmpAry.splice(idx, 1);
+      let lossPicId = tmpAry[0].id;
+
+      //console.log(wonPicId);
+      //console.log(lossPicId);
+
+      const data = {won: wonPicId, loss: lossPicId};
+      const headers= {'Content-Type': 'application/json'}
+      axios.post("/api/rate", data, headers).then(response => { 
+        console.log(response.data);
+        this.call_pics();
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
+
     }
 
   },
@@ -100,4 +139,25 @@ export default {
 .selectFrame .sideBtn:hover{
   background-color: #333;
 }
+
+.mashFrame{
+  display: table;
+  margin: 20px auto auto auto;
+  background-color: #ccc;
+  box-shadow: 1px 1px #fff;
+  padding: 4px;
+}
+.mashFrame td{
+  vertical-align: top;
+}
+.mashFrame img{
+  margin:8px;
+  box-shadow: 1px 1px #fff;
+  cursor: pointer;
+  border: 1px solid #999;
+  max-width: 600px;
+  max-height: 600px;
+  width:96%;
+}
+
 </style>

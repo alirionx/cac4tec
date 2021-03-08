@@ -3,6 +3,7 @@ import time
 import datetime
 import json
 import yaml
+import random
 import sqlite3
 from PIL import Image
 
@@ -144,43 +145,51 @@ class pics:
     myDbTool = db_tool()
     curTs = myHelpers.get_timestamp_str()
 
-    dic = {
-      "added": curTs,
-      "mash": mashId,
-    }
-
     mim = file.filename.rsplit('.', 1)[1].lower()
     #print(mim)
     if mim not in allowedMime:
       return False
 
+    dic = {
+      "added": curTs,
+      "mash": mashId,
+      "mime": mim
+    }
+
     newId = myDbTool.execute_insert("pics", dic)
     newFileName = "%s.%s" %(newId, mim)
     newFilePath = os.path.join(picFolderPath, newFileName )
+    newThumbPath = os.path.join(picFolderPath, 'thumb_'+newFileName )
+
+    imagepath = picFolderName + '/' + str(newId) + '.' + mim
+    thumbpath = picFolderName + '/thumb_' + str(newId) + '.' + mim
+    myDbTool.execute_update("UPDATE pics SET imagepath = '%s', thumbpath = '%s' WHERE id = %s ;" %(imagepath, thumbpath, newId) )
+
+
     file.save(newFilePath)
-    
+    shutil.copy2(newFilePath, newThumbPath)
+
     try:
       self.resize_pic(newFilePath)
+      self.resize_pic(newThumbPath, pixLmt=thumbPixelLimit)
       return True
     except Exception as e:
       print(e)
       myDbTool.execute_delete("DELETE FROM pics WHERE id = %s ;" %newId)
       return False  
 
-
-
   #--------------------------------------
-  def resize_pic(self, filePath): #UIUIUIUIUIUIUIUIUIUI
+  def resize_pic(self, filePath, pixLmt=pixelLimit): #UIUIUIUIUIUIUIUIUIUI
     img = Image.open(filePath, "r")  
     width, height = img.size
 
     if height > width:
       relation = width / height
-      newheight = pixelLimit
+      newheight = pixLmt
       newWidth = round(newheight * relation)
     else:
       relation = height / width
-      newWidth = pixelLimit
+      newWidth = pixLmt
       newheight = round(newWidth * relation)
 
     #print(newWidth, newheight)
@@ -188,4 +197,65 @@ class pics:
     newImg.save(filePath)
     
 
+  #--------------------------------------
+  def remove_pic(self, picId):
+    myDbTool = db_tool()
+    sqlRes = myDbTool.execute_select("SELECT imagepath, thumbpath FROM pics WHERE id = %s;" %int(picId) )
+    if sqlRes == 0:
+      return False
+    imagepath = sqlRes[0]["imagepath"]
+    thumbpath = sqlRes[0]["thumbpath"]
+    sqlRes = myDbTool.execute_delete("DELETE FROM pics WHERE id = %s;" %int(picId) )
+    
+    imageFullPath = os.path.join(curPath, staticPath, imagepath)
+    thumbFullPath = os.path.join(curPath, staticPath, thumbpath)
+
+    try:
+      os.remove(imageFullPath)
+      os.remove(thumbFullPath)
+    except Exception as e:
+      print(e)
+    
+    return True
+
+  #--------------------------------------
+  def random_mash(self, mashId):
+    myDbTool = db_tool()
+    sqlRes = myDbTool.execute_select("SELECT * FROM pics WHERE mash = %s;" %int(mashId) )
+    if len(sqlRes) < 2:
+      return False
+    
+    tmpAry = []
+    for row in sqlRes:
+      tmpAry.append(row)
+
+    mashSelect = random.sample(tmpAry, 2)
+    #print(mashSelect)
+    return mashSelect
+
+  #--------------------------------------
+  def rate_mash(self, rateObj):
+    
+    if "won" not in rateObj or "loss" not in rateObj:
+      return False
+
+    wonId = rateObj["won"]
+    lossId = rateObj["loss"]
+
+    myDbTool = db_tool()
+    try:
+      sqlRes = myDbTool.execute_select("SELECT won FROM pics WHERE id = %s;" %int(wonId) )
+      newWon = int(sqlRes[0]["won"]) +1
+      sqlRes = myDbTool.execute_select("SELECT loss FROM pics WHERE id = %s;" %int(lossId) )
+      newLoss = int(sqlRes[0]["loss"]) +1
+    except Exception as e:
+      prtin(e)
+      return False
+
+    sqlRes = myDbTool.execute_update("UPDATE pics SET won = %s WHERE id = %s;" %(newWon, wonId) )
+    sqlRes = myDbTool.execute_update("UPDATE pics SET loss = %s WHERE id = %s;" %(newLoss, lossId) )
+
+    return True
+
+  
   #--------------------------------------

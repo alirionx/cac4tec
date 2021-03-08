@@ -15,6 +15,9 @@ tables:
       CREATE TABLE "pics" (
         "id" INTEGER NOT NULL UNIQUE,
         "added" TEXT,
+        "mime" TEXT,
+        "filepath" TEXT,
+        "thumbpath" TEXT,
         "mash" INTEGER NOT NULL,
         "won"	INTEGER DEFAULT 0,
         "loss"	INTEGER DEFAULT 0,

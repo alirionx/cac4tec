@@ -200,9 +200,10 @@ export default {
     delete_mash(idx){
       let id = this.mashes[idx].id;
 
-      const headers = {'Content-Type': 'application/json'}
-      const data = {'id': id}
-      axios.delete("/api/mash/"+id, data, headers).then(response => { 
+      //const headers = {'Content-Type': 'application/json'}
+      //const data = {'id': id}
+      //axios.delete("/api/mash/"+id, data, headers).then(response => { 
+      axios.delete("/api/mash/"+id ).then(response => { 
         console.log(response.data);
         this.call_mashes();
       })
