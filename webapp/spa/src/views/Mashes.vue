@@ -44,6 +44,7 @@ export default {
       axios.get("/api/mashes").then(response => { 
         console.log(response.data);
         this.mashes = response.data.data;
+        this.chk_mash_per_param();
       })
       .catch(error => {
         console.log(error);
@@ -84,7 +85,28 @@ export default {
       .catch(error => {
         console.log(error.response);
       });
+    },
 
+    chk_mash_per_param(){ //UIUIUIUIUIUIUIUIUIUIUIUIUIUIUIUIUIUIUIUI
+      let isHash = location.hash;
+      if(isHash.includes('?')){ 
+        let hashSplit = isHash.split('?');
+        try {
+          var selMash = parseInt(hashSplit[1]);
+          //console.log(selMash);
+        } catch (error) {
+          console.error(error);
+          return false
+        }
+        for(let idx in this.mashes){
+          //console.log(selMash, idx);
+          if(this.mashes[idx].id==selMash){
+            this.selected_mash = idx;
+            this.call_pics();
+            location.hash='/';
+          }
+        }
+      }
     }
 
   },
@@ -92,7 +114,7 @@ export default {
   created: function(){
     this.call_mashes();
   },
-  mounted: function(){
+  mounted: function(){ 
 
   },
 }

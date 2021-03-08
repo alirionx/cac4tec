@@ -1,6 +1,6 @@
 <template>
   <div class="Pics">
-    <div class="pageHl">Mash: {{mashObj.name}}</div>
+    <div class="pageHl" v-on:click="back_to_mash">Mash: {{mashObj.name}}</div>
     <div class="picUpload" v-if="admin">
       <input type="file" id="imageSelectIpt" v-on:change="apply_file_select" multiple accept="image/png, image/jpeg, image/jpg" />
       <div class="uploadHl">Images to upload</div>
@@ -103,6 +103,11 @@ export default {
     }
   },
   methods:{
+    
+    back_to_mash(){
+      location.hash = '/?'+this.mash;
+    },
+
     call_pics(){
       this.loader = true;
       axios.get("/api/pics/"+this.mash).then(response => { 
@@ -281,6 +286,13 @@ export default {
 .picPrevBox img{
   width: 100%;
   box-shadow: 1px 1px #fff;
+}
+
+.pageHl{
+  cursor: pointer;
+}
+.pageHl:hover{
+  text-decoration: underline;
 }
 
 
