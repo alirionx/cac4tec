@@ -2,6 +2,7 @@
   <div id="app">
     <div class="headBlock">
       <div class="hl" v-on:click="call_home">PicMash Example App 4 TechSession</div>
+      <div class="hn" >{{hostName}}</div>
       <img class="gear" v-bind:class="{active: chk_admin_hash()}" src="@/assets/admin_gear.svg" v-on:click="call_admin" />
     </div>
 
@@ -25,13 +26,15 @@ export default {
   data(){
     return{
       appReady: false,
+      hostName: "",
     }
   },
   methods:{
     chk_app_ready(){
       axios.get("/api/app/init").then(response => { 
-        console.log(response.data);
+        //console.log(response.data);
         this.appReady = response.data.state;
+        this.hostName = response.data.hostname;
       })
       .catch(error => {
         console.log(error);
@@ -97,6 +100,17 @@ body {
   font-family: 'Courier New', Courier, monospace;
   cursor: pointer;
 }
+.headBlock .hn{
+  position: absolute;
+  left: 26px;
+  top: 36px;
+  font-weight: 900;
+  font-size: 13px;
+  color:#111;
+  text-shadow: 1px 1px #fff;
+  font-family: 'Courier New', Courier, monospace;
+}
+
 .headBlock .gear{
   position: absolute;
   right:50px;
@@ -118,6 +132,29 @@ body {
   color:#333;
   text-shadow: 1px 1px #fff;
   *font-weight: bold;
+}
+
+.adminBtns{
+  position: fixed;
+  right:20px;
+  top:110px;
+  width: 120px;
+  
+}
+.adminBtns div{
+  font-size: 14px;
+  font-weight:bold;
+  cursor: pointer;
+  padding:3px;
+  text-shadow: 0px 1px #fff;
+  box-shadow: 0px 1px #fff;
+  background-color: #ccc;
+  color:#333;
+  border: 1px solid #aaa;
+  margin:5px;
+}
+.adminBtns div:hover{
+  text-decoration: underline;
 }
 
 .stdTbl{

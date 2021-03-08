@@ -344,7 +344,6 @@ def api_mashes_change():
   return jsonify(resObj), status
 
 #----------------------------------------------
-
 @app.route('/api/mash', methods=['POST'])
 def api_mashes_add():
   status = 200
@@ -368,24 +367,24 @@ def api_mashes_add():
   return jsonify(resObj), status
 
 #----------------------------------------------
-@app.route('/api/mash/<curId>', methods=['DELETE'])
-def api_mashes_delete(curId):
+@app.route('/api/mash/<mashId>', methods=['DELETE'])
+def api_mashes_delete(mashId):
   status = 200
   resObj = {
-    "path": "/api/mash/%s" %curId,
+    "path": "/api/mash/%s" %mashId,
     "method": "DELETE",
     "msg": "",
   }
 
   myDbTool = db_tool()
   myPics = pics()
-  #sqlRes = myDbTool.execute_delete("DELETE FROM pics WHERE mash = %s ;" %int(curId) )
-  sqlRes = myDbTool.execute_select("SELECT id FROM pics WHERE mash = %s ;" %int(curId) )
+  #sqlRes = myDbTool.execute_delete("DELETE FROM pics WHERE mash = %s ;" %int(mashId) )
+  sqlRes = myDbTool.execute_select("SELECT id FROM pics WHERE mash = %s ;" %int(mashId) )
   for row in sqlRes:
     picId = row["id"]
     myPics.remove_pic(picId)
 
-  sqlRes = myDbTool.execute_delete("DELETE FROM mashes WHERE id = %s ;" %int(curId) )
+  sqlRes = myDbTool.execute_delete("DELETE FROM mashes WHERE id = %s ;" %int(mashId) )
   if sqlRes == 0:
     status = 404
     resObj["msg"] = "mash not found" 
@@ -395,6 +394,28 @@ def api_mashes_delete(curId):
   resObj["status"] = status
   return jsonify(resObj), status
 
+#----------------------------------------------
+@app.route('/api/mash/<mashId>', methods=['PATCH'])
+def api_mashes_reset(mashId):
+  status = 200
+  resObj = {
+    "path": "/api/mash/%s" %mashId,
+    "method": "PATCH",
+    "msg": "",
+  }
+
+  print(mashId)
+  myDbTool = db_tool()
+  sqlRes = myDbTool.execute_update("UPDATE pics SET won = 0, loss = 0, wonrate = 0, lossrate = 0 WHERE mash = %s ;" %int(mashId) )
+ 
+  if sqlRes == 0:
+    status = 404
+    resObj["msg"] = "mash not found or no images available" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  resObj["status"] = status
+  return jsonify(resObj), status
 
 #----------------------------------------------
 @app.route('/api/pics/<mashId>', methods=['GET'])
@@ -435,7 +456,7 @@ def api_pics_get(mashId):
 def api_pics_upload(mashId):
   status = 200
   resObj = {
-    "path": "/api/mash/%s" %mashId,
+    "path": "/api/pics/%s" %mashId,
     "method": "POST",
     "msg": "",
   }

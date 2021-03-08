@@ -292,27 +292,4 @@ table tr:last-child td{
   border: none;
 }
 
-.adminBtns{
-  position: fixed;
-  right:20px;
-  top:110px;
-  width: 120px;
-  
-}
-.adminBtns div{
-  font-size: 14px;
-  font-weight:bold;
-  cursor: pointer;
-  padding:3px;
-  text-shadow: 0px 1px #fff;
-  box-shadow: 0px 1px #fff;
-  background-color: #ccc;
-  color:#333;
-  border: 1px solid #aaa;
-  margin:5px;
-}
-.adminBtns div:hover{
-  text-decoration: underline;
-}
-
 </style>

@@ -1,5 +1,9 @@
 <template>
   <div class="Pics">
+    <div class="adminBtns">
+      <div v-on:click="call_reset_mash_rating">reset rating</div>
+    </div>
+    
     <div class="pageHl" v-on:click="back_to_mash">Mash: {{mashObj.name}}</div>
     <div class="picUpload" v-if="admin">
       <input type="file" id="imageSelectIpt" v-on:change="apply_file_select" multiple accept="image/png, image/jpeg, image/jpg" />
@@ -205,6 +209,21 @@ export default {
       else{
         this.picPrev = picPrev;
       } 
+    },
+
+    call_reset_mash_rating(){
+      this.confirmMsg = "Do you really want reset the rating?";
+      var fwFunc = this.reset_mash_rating;
+      this.confirmFw = function(){ fwFunc() }
+    },
+    reset_mash_rating(){
+      axios.patch("/api/mash/"+this.mashObj.id ).then(response => { 
+        console.log(response.data);
+        this.call_pics();
+      })
+      .catch(error => {
+        console.log(error);
+      });
     },
 
     reset_confirm(){
