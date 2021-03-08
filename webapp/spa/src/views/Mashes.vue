@@ -18,21 +18,24 @@
       </td>
     </tr></table>
     
+    <Loader v-if="loader" />
+
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-// @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
+
+import Loader from '@/components/Loader.vue'
 
 export default {
   name: 'Mashes',
   components: {
-    //HelloWorld
+    Loader
   },
   data(){
     return{
+      loader: false,
       mashes: [],
       data: [],
       selected_mash: null,
@@ -52,14 +55,18 @@ export default {
     },
     
     call_pics(){
+      this.loader = true;
       this.selected_mash_desc = this.mashes[this.selected_mash].description;
       this.data = [];
       axios.get("/api/rate/"+this.mashes[this.selected_mash].id).then(response => { 
         console.log(response.data);
         this.data = response.data.data;
+        var fwFunc = ()=>{this.loader = false;}
+        setTimeout( function(){ fwFunc(); }, 400 )
       })
       .catch(error => {
         console.log(error.response);
+        this.loader = false;
       });
     },
 

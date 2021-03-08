@@ -22,7 +22,7 @@
   tasks: 
     - name: Copy WebApp to Web Servers
       copy:
-        src: ../webapp/
+        src: ../webapp/backend/
         dest: "{{nfs_tgt}}/"
 
 - name: WebApp Config 

@@ -4,9 +4,9 @@ import os
 import json
 import yaml
 
-os.chdir('../terraform')
+os.chdir('../Terraform')
 jsonIn = os.popen('terraform output -json').read()
-os.chdir('../ansible')
+os.chdir('../Ansible')
 
 objIn = json.loads(jsonIn)
 pipObj = objIn["public_ips"]["value"]
