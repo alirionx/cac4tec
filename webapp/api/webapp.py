@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import json
 import yaml
 import time
@@ -15,6 +16,14 @@ from tools import helpers, db_tool, pics
 #curPath = os.path.dirname(os.path.abspath(__file__))
 curHostName = socket.gethostname()
 
+admNeeded = { #UIUIUIUIUIUIIUIUIUIUIUIUIUIU
+  "^\/api\/mash$": "PUT",
+  "^\/api\/mash$": "POST",
+  "^\/api\/mash\/.*": "DELETE",
+  "^\/api\/pics\/.*": "POST",
+  "^\/api\/pic\/.*": "DELETE"
+}
+  
 
 #-Build the flask app object---------------------------------------
 #app = Flask(__name__ )
@@ -24,14 +33,25 @@ app.debug = True
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 #-App Pre Checks---------------------------------------------------
-@app.before_first_request
-def app_ready_check():
-  myHelpers = helpers()
-  myHelpers.app_ready_check()
+# @app.before_first_request
+# def app_ready_check():
+#   myHelpers = helpers()
+#   myHelpers.app_ready_check()
 
 @app.before_request
 def set_adm_session():
-  session["admin"] = True
+  #print(request.path, request.method)
+  for reStr, method in admNeeded.items():
+    reChk = re.search(reStr, request.path)
+    if reChk and method == request.method and "admin" not in session: #KRASSER SCHEISS!!!!
+      resObj = {
+        "path": request.path,
+        "method": request.method,
+        "status": 401,
+      }
+      return jsonify(resObj), 401 
+
+  #session["admin"] = False
 
 #-The APP Request Handler Area-------------------------------------
 @app.route('/', methods=['GET'])
@@ -51,13 +71,101 @@ def api_home():
   }
   return jsonify(resObj), 200
 
+
+#------------------------------------------
+@app.route('/api/app/ready', methods=['GET'])
+def achk_app_ready():
+  
+  resObj = {
+    "path": "/api/app/ready",
+    "method": "GET",
+    "status": 200,
+    "state": False,
+    "hostname": curHostName
+  }
+
+  myHelpers = helpers()
+  res = myHelpers.app_ready_check()
+
+  resObj["state"] = res
+  
+  return jsonify(resObj), 200
+
+
+#------------------------------------------
+@app.route('/api/auth', methods=['GET'])
+def api_auth_get():
+  status = 200
+  resObj = {
+    "path": "/api/auth",
+    "method": "GET",
+    "msg": ""
+  }
+
+  if "admin" not in session:
+    status = 401
+    resObj["msg"] = "not loghged in"
+
+  return jsonify(resObj), status
+
+#------------------------------------------
+@app.route('/api/auth', methods=['POST'])
+def api_auth_do():
+  status = 200
+  resObj = {
+    "path": "/api/auth",
+    "method": "POST",
+    "msg": ""
+  }
+
+  objIn = request.get_json()
+  if "pwd" not in objIn:
+    status = 500
+    resObj["msg"] = "pwd input required" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  pwdIn = objIn["pwd"]
+
+  myDbTool = db_tool()
+  res = myDbTool.check_admin_auth(pwdIn)
+
+  if res:
+    session["admin"] = True
+  else:
+    status = 401
+    resObj["status"] = status
+    resObj["msg"] = "Wrong password" 
+  
+  # if "pwd" in session:
+  #   resObj["admin"] = True
+  # else:
+  #   resObj["admin"] = False
+
+  return jsonify(resObj), status
+
+#------------------------------------------
+@app.route('/api/auth', methods=['DELETE'])
+def api_auth_delete():
+  status = 200
+  resObj = {
+    "path": "/api/auth",
+    "method": "DELETE",
+    "msg": ""
+  }
+
+  session.pop('admin', None)
+
+  return jsonify(resObj), status
+
+
 #------------------------------------------
 @app.route('/api/mashes', methods=['GET'])
 def api_mashes_get():
   status = 200
   resObj = {
     "path": "/api/mashes",
-    "method": "GET",
+    "method": "DELETE",
     "msg": "Hello from the API",
   }
 

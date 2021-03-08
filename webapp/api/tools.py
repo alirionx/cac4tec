@@ -4,6 +4,7 @@ import datetime
 import json
 import yaml
 import random
+import hashlib
 import sqlite3
 from PIL import Image
 
@@ -19,6 +20,15 @@ class helpers:
   def app_ready_check(self):
     if not os.path.isdir(picFolderPath):
       os.mkdir(picFolderPath)
+
+    myDbTool = db_tool()
+    sqlRes = myDbTool.execute_select("SELECT pwdhash FROM pwd;")
+    if len(sqlRes) == 0:
+      return False
+    elif sqlRes[0]["pwdhash"] == "":
+      return False
+    else:
+      return True
   
   #------------------------------------
   def get_timestamp_str(self):
@@ -134,7 +144,22 @@ class db_tool:
     return dbCurs.rowcount
 
   #--------------------------------------
+  def check_admin_auth(self, pwd):
+    sqlRes = self.execute_select("SELECT pwdhash FROM pwd;")
+    if len(sqlRes) == 0:
+      return False
+    
+    pwdHashDB = sqlRes[0]["pwdhash"]
+    pwdHashIn = hashlib.md5( pwd.encode() ).hexdigest()
+    if pwdHashDB == pwdHashIn:
+      return True
+    else:
+      return False
 
+  #--------------------------------------
+  
+
+#-----------------------------------------------------------------
 class pics:
   def __init__(self):
     inf ="pics object created"

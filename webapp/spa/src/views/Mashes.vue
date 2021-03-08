@@ -12,12 +12,12 @@
       <div class="mashDesc" v-if="selected_mash!=null">{{selected_mash_desc}}</div>
     </div>  
 
-    <table class="mashFrame" v-if="selected_mash!=null"><tr>
+    <table class="mashFrame" v-if="selected_mash!=null && data.length > 0"><tr>
       <td v-for="(pic, idx) in data" :key="idx">
         <img :src="pic.imagepath" v-on:click="rate_pic(idx)" />
       </td>
     </tr></table>
-
+    
   </div>
 </template>
 
@@ -53,7 +53,7 @@ export default {
     
     call_pics(){
       this.selected_mash_desc = this.mashes[this.selected_mash].description;
-    
+      this.data = [];
       axios.get("/api/rate/"+this.mashes[this.selected_mash].id).then(response => { 
         console.log(response.data);
         this.data = response.data.data;

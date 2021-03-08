@@ -1,5 +1,7 @@
 <template>
-  <div class="admin">
+  <div>
+  <div class="admin" v-if="admin">
+    <div class="logoutBtn" v-on:click="admin_logout">logout</div>
     <table class="stdTbl">
       <thead>
         <tr>
@@ -52,22 +54,33 @@
     />
 
   </div>
+
+  <AdminLogin v-if="!admin" 
+    v-bind:callback="chk_admin_login"/>
+  
+  </div>
+
 </template>
+
+
 
 <script>
 import axios from 'axios'
 
+import AdminLogin from '../components/AdminLogin.vue'
 import ActionMenu from '../components/ActionMenu.vue'
 import ConfirmBox from '../components/ConfirmBox.vue'
 
 export default {
   name: 'Admin',
   components: {
+    AdminLogin,
     ActionMenu,
     ConfirmBox
   },
   data(){
     return{
+      admin: false,
       active_mash: null,
       mashes: [],
       defi:[
@@ -119,6 +132,30 @@ export default {
     }
   },
   methods:{
+
+    chk_admin_login(){
+      axios.get("/api/auth").then(response => { 
+        console.log(response.data);
+        this.admin = true;
+        this.call_mashes();
+      })
+      .catch(error => {
+        //console.log(error);
+        this.admin = false;
+      });
+    },
+
+    admin_logout(){
+      axios.delete("/api/auth").then(response => { 
+        console.log(response.data);
+        this.chk_admin_login();
+      })
+      .catch(error => {
+        console.log(error);
+        this.chk_admin_login();
+      });
+    },
+
     call_mashes(){
       axios.get("/api/mashes").then(response => { 
         console.log(response.data);
@@ -219,7 +256,7 @@ export default {
   },
   
   created: function(){
-    this.call_mashes();
+    this.chk_admin_login()
   },
   mounted: function(){
     //UIUIUIUIUIUIU
@@ -237,6 +274,18 @@ export default {
 <style scoped>
 table tr:last-child td{
   border: none;
+}
+
+.logoutBtn{
+  position: fixed;
+  right:24px;
+  top:110px;
+  font-size: 14px;
+  font-weight:bold;
+  cursor: pointer;
+}
+.logoutBtn:hover{
+  text-decoration: underline;
 }
 
 </style>

@@ -5,15 +5,42 @@
       <img class="gear" v-bind:class="{active: chk_admin_hash()}" src="@/assets/admin_gear.svg" v-on:click="call_admin" />
     </div>
 
-    <router-view/>
+    <router-view />
+
+    <AppInit v-if="!appReady" />
+    
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+import AppInit from './components/AppInit.vue'
+
 export default {
   name: 'App',
+  components:{
+    AppInit
+  },
+  data(){
+    return{
+      appReady: false,
+    }
+  },
   methods:{
-    call_admin(){
+    chk_app_ready(){
+      axios.get("/api/app/ready").then(response => { 
+        console.log(response.data);
+        this.appReady = response.data.state;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    },
+    call_admin(){   
+      if(this.chk_admin_hash()){
+        this.call_home();
+        return
+      }
       location.hash = "/admin";
     },
     call_home(){
@@ -26,7 +53,11 @@ export default {
       else{
         return false;
       }
-    }
+    },
+  },
+
+  created: function(){
+    this.chk_app_ready();
   }
 }
 </script>
@@ -49,7 +80,7 @@ body {
   position: fixed;
   top: 0px;
   left: 0px;
-  width: 96%;
+  width: 97%;
   text-align: center;
   padding: 30px;
   background-color: #ccc;
