@@ -188,6 +188,31 @@ class pics:
     inf ="pics object created"
   
   #--------------------------------------
+  def call_mash_pics(self, mashId ):
+    myDbTool = db_tool()
+    picAry = []
+    sqlRes = myDbTool.execute_select("SELECT * FROM pics WHERE mash = %s;" %int(mashId) )
+    for row in sqlRes:
+      picId = row["id"]
+      
+      wonrate = int(row["wonrate"])
+      lossrate = int(row["lossrate"])
+      if wonrate == 0 and lossrate == 0:
+        ratio = 50
+      elif wonrate == 0:
+        ratio = 0
+      elif lossrate == 0:
+        ratio = 100
+      else:
+        ratio = round( wonrate / ( wonrate + lossrate ) * 100 ) 
+
+      row["ratio"] = str(ratio) + '%'
+      row["ratioNmb"] = ratio
+      picAry.append(row)
+
+    return picAry
+
+  #--------------------------------------
   def insert_pic(self, mashId, file):
     myHelpers = helpers()
     myDbTool = db_tool()
@@ -282,7 +307,28 @@ class pics:
     return mashSelect
 
   #--------------------------------------
-  def rate_mash(self, rateObj):
+  def get_pic_ratio(self, picId):
+    myDbTool = db_tool()
+    sqlRes = myDbTool.execute_select("SELECT wonrate, lossrate FROM pics WHERE id = %s;" %int(picId) )
+    if len(sqlRes) == 0:
+      return False
+
+    picWonRate = int(sqlRes[0]["wonrate"])
+    picLossRate = int(sqlRes[0]["lossrate"])
+
+    if picWonRate == 0 and picLossRate == 0:
+      picRatio = 50
+    elif picWonRate == 0:
+      picRatio = 0
+    elif picLossRate == 0:
+      picRatio = 100
+    else:
+      picRatio = round( picWonRate / (picWonRate + picLossRate) *100 ) 
+
+    return picRatio
+
+  #--------------------------------------
+  def rate_mash(self, rateObj): #TOTAL VERRÜCKT!
     
     if "won" not in rateObj or "loss" not in rateObj:
       return False
@@ -291,19 +337,31 @@ class pics:
     lossId = rateObj["loss"]
 
     myDbTool = db_tool()
-    try:
-      sqlRes = myDbTool.execute_select("SELECT won FROM pics WHERE id = %s;" %int(wonId) )
-      newWon = int(sqlRes[0]["won"]) +1
-      sqlRes = myDbTool.execute_select("SELECT loss FROM pics WHERE id = %s;" %int(lossId) )
-      newLoss = int(sqlRes[0]["loss"]) +1
-    except Exception as e:
-      prtin(e)
-      return False
+    
+    sqlRes = myDbTool.execute_select("SELECT won, loss, wonrate, lossrate FROM pics WHERE id = %s;" %int(wonId) )
+    winnerNewWon = int(sqlRes[0]["won"]) +1
+    winnerWonRate = int(sqlRes[0]["wonrate"])
+    winnerLossRate = int(sqlRes[0]["lossrate"])
+      
+    winnerRatio = self.get_pic_ratio(wonId)
+    #if not winnerRatio: return False
+      
+    sqlRes = myDbTool.execute_select("SELECT won, loss, wonrate, lossrate FROM pics WHERE id = %s;" %int(lossId) )
+    loserNewLoss = int(sqlRes[0]["loss"]) +1
+    loserWonRate = int(sqlRes[0]["wonrate"])
+    loserLossRate = int(sqlRes[0]["lossrate"])
 
-    sqlRes = myDbTool.execute_update("UPDATE pics SET won = %s WHERE id = %s;" %(newWon, wonId) )
-    sqlRes = myDbTool.execute_update("UPDATE pics SET loss = %s WHERE id = %s;" %(newLoss, lossId) )
+    loserRatio = self.get_pic_ratio(lossId)
+    #if not loserRatio: return False
+      
+    newWinnerWonRate = round( winnerWonRate + ( loserRatio / 10 ) + 1 )
+    newLoserLossRate = round( loserLossRate + ( winnerRatio / 10 ) + 1 )
+
+    sqlRes = myDbTool.execute_update("UPDATE pics SET won = %s, wonrate = %s WHERE id = %s;" %(winnerNewWon, newWinnerWonRate, wonId) )
+    sqlRes = myDbTool.execute_update("UPDATE pics SET loss = %s, lossrate = %s WHERE id = %s;" %(loserNewLoss, newLoserLossRate, lossId) )
+    
+    #print(str(winnerRatio) + ' : ' + str(loserRatio))
 
     return True
-
   
   #--------------------------------------
