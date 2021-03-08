@@ -55,7 +55,7 @@ export default {
     },
     
     call_pics(){
-      this.loader = true;
+      if(!this.loader){this.loader = true}
       this.selected_mash_desc = this.mashes[this.selected_mash].description;
       this.data = [];
       axios.get("/api/rate/"+this.mashes[this.selected_mash].id).then(response => { 
@@ -75,6 +75,7 @@ export default {
     },
 
     rate_pic(idx){
+      this.loader = true;
       let wonPicId = this.data[idx].id;
       let tmpAry = this.data.slice();
       tmpAry.splice(idx, 1);

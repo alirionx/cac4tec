@@ -20,10 +20,17 @@
 - name: WebApp Copy 
   hosts: web1 # Nur auf einen Host weil wegen Ccentral Storage
   tasks: 
-    - name: Copy WebApp to Web Servers
-      copy:
+    # - name: Copy WebApp to Web Servers
+    #   copy:
+    #     src: ../webapp/backend/
+    #     dest: "{{nfs_tgt}}/"
+    - name: Synchronize WebApp Folder
+      synchronize:
         src: ../webapp/backend/
         dest: "{{nfs_tgt}}/"
+        rsync_opts:
+          - "--exclude=*.db"
+          - "--exclude=dist/pics/*"
 
 - name: WebApp Config 
   hosts: stack

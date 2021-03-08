@@ -16,7 +16,7 @@ then
   rm -R tmpdl
 fi
 
-cd $WRKDIR/terraform
+cd $WRKDIR/Terraform
 if [ ! -f "creds.tf" ]; then
   echo "please configure your credentials first (creds.tf)."
   exit
