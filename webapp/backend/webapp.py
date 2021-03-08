@@ -21,7 +21,8 @@ admNeeded = { #UIUIUIUIUIUIIUIUIUIUIUIUIUIU
   "^\/api\/mash$": "POST",
   "^\/api\/mash\/.*": "DELETE",
   "^\/api\/pics\/.*": "POST",
-  "^\/api\/pic\/.*": "DELETE"
+  "^\/api\/pic\/.*": "DELETE",
+  "^\/api\/app\/pwd$": "POST"
 }
   
 
@@ -122,6 +123,49 @@ def set_app_init():
     return jsonify(resObj), status
 
   return jsonify(resObj), status
+
+#------------------------------------------
+@app.route('/api/app/pwd', methods=['POST'])
+def api_reset_pwd():
+  status = 200
+  resObj = {
+    "path": "/api/app/pwd",
+    "method": "POST",
+    "msg": ""
+  }
+
+  objIn = request.get_json()
+  neededVals = ["curPwd", "newPwd"]
+  for val in neededVals:
+    if val not in objIn:
+      status = 500
+      resObj["msg"] = val+" para is missing" 
+      resObj["status"] = status
+      return jsonify(resObj), status
+
+  curPwd = objIn["curPwd"]
+  newPwd = objIn["newPwd"]
+
+  myDbTool = db_tool()
+  res = myDbTool.check_admin_auth(curPwd)
+  if not res:
+    status = 401
+    resObj["msg"] = "Wrong admin pwd" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  try:
+    myDbTool.set_admin_pwd(newPwd)
+  except:
+    status = 500
+    resObj["msg"] = "Something went wrong" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+
+  return jsonify(resObj), status
+
+
 
 #------------------------------------------
 @app.route('/api/auth', methods=['GET'])

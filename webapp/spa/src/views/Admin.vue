@@ -1,7 +1,10 @@
 <template>
   <div>
   <div class="admin" v-if="admin">
-    <div class="logoutBtn" v-on:click="admin_logout">logout</div>
+    <div class="adminBtns">
+      <div v-on:click="call_admin_pwd">reset pwd</div>
+      <div v-on:click="admin_logout">logout</div>
+    </div>
     <table class="stdTbl">
       <thead>
         <tr>
@@ -58,6 +61,9 @@
   <AdminLogin v-if="!admin" 
     v-bind:callback="chk_admin_login"/>
   
+  <AdminPwd v-if="setAdminPwd" 
+    v-bind:callback="reset_admin_pwd" />
+
   </div>
 
 </template>
@@ -67,6 +73,7 @@
 <script>
 import axios from 'axios'
 
+import AdminPwd from '../components/AdminPwd.vue'
 import AdminLogin from '../components/AdminLogin.vue'
 import ActionMenu from '../components/ActionMenu.vue'
 import ConfirmBox from '../components/ConfirmBox.vue'
@@ -75,12 +82,14 @@ export default {
   name: 'Admin',
   components: {
     AdminLogin,
+    AdminPwd,
     ActionMenu,
     ConfirmBox
   },
   data(){
     return{
       admin: false,
+      setAdminPwd: false,
       active_mash: null,
       mashes: [],
       defi:[
@@ -154,6 +163,13 @@ export default {
         console.log(error);
         this.chk_admin_login();
       });
+    },
+
+    call_admin_pwd(){
+      this.setAdminPwd = true;
+    },
+    reset_admin_pwd(){
+      this.setAdminPwd = false;
     },
 
     call_mashes(){
@@ -276,15 +292,26 @@ table tr:last-child td{
   border: none;
 }
 
-.logoutBtn{
+.adminBtns{
   position: fixed;
-  right:24px;
+  right:20px;
   top:110px;
+  width: 120px;
+  
+}
+.adminBtns div{
   font-size: 14px;
   font-weight:bold;
   cursor: pointer;
+  padding:3px;
+  text-shadow: 0px 1px #fff;
+  box-shadow: 0px 1px #fff;
+  background-color: #ccc;
+  color:#333;
+  border: 1px solid #aaa;
+  margin:5px;
 }
-.logoutBtn:hover{
+.adminBtns div:hover{
   text-decoration: underline;
 }
 

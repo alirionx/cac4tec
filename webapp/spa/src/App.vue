@@ -100,9 +100,10 @@ body {
 .headBlock .gear{
   position: absolute;
   right:50px;
-  top:24px;
+  top:22px;
   height: 40px;
   cursor: pointer;
+  padding-bottom:4px;
 }
 .headBlock .gear:hover{
   border-bottom: #333 2px solid;
