@@ -1,5 +1,5 @@
 <template>
-  <div class="stdForm" v-on:keyup.enter="submit_login">
+  <div class="stdForm" v-on:keyup.enter="submit_admin_pwd">
     <div class="hl">App Init - Set Admin Password</div>
 
     <input type="password" id="adminPwdIpt" placeholder="Enter Admin Password" v-model="adminPwdIpt" />
@@ -29,8 +29,7 @@ export default {
   methods:{
     submit_admin_pwd(){
       console.log(this.adminPwdIpt + ' : ' + this.adminPwdRep)
-      /*
-      if(this.adminPwd == ""){
+      if(this.adminPwdIpt == ""){
         let adminPwdIpt = document.getElementById("adminPwdIpt");
         var tmpColo = adminPwdIpt.style.borderColor;
         adminPwdIpt.style.borderColor = "red";
@@ -39,23 +38,30 @@ export default {
         },400 )
         return false;
       }
+      if(this.adminPwdIpt != this.adminPwdRep){
+        let adminPwdRep = document.getElementById("adminPwdRep");
+        var tmpColo = adminPwdRep.style.borderColor;
+        adminPwdRep.style.borderColor = "red";
+        setTimeout( function(){
+          adminPwdRep.style.borderColor = tmpColo;
+        },400 )
+        return false;
+      }
 
-      const data = {pwd: this.adminPwd}
+      const data = {pwd: this.adminPwdIpt}
       const headers= {'Content-Type': 'application/json'}
-      axios.post("/api/auth", data, headers).then(response => { 
+      axios.post("/api/app/init", data, headers).then(response => { 
         console.log(response.data);
         this.callback();
       })
       .catch(error => {
         console.log(error);
-        this.adminPwd = "";
+        this.adminPwdIpt = "";
+        this.adminPwdRep = "";
       });
-      */
+      
     },
 
-    cancel_login(){
-      location.hash = '/';
-    }
   }
 }
 </script>

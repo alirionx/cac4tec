@@ -5,10 +5,11 @@
       <img class="gear" v-bind:class="{active: chk_admin_hash()}" src="@/assets/admin_gear.svg" v-on:click="call_admin" />
     </div>
 
-    <router-view />
+    <router-view v-if="appReady" />
 
-    <AppInit v-if="!appReady" />
-    
+    <AppInit v-if="!appReady" 
+      v-bind:callback="chk_app_ready" />
+
   </div>
 </template>
 
@@ -28,7 +29,7 @@ export default {
   },
   methods:{
     chk_app_ready(){
-      axios.get("/api/app/ready").then(response => { 
+      axios.get("/api/app/init").then(response => { 
         console.log(response.data);
         this.appReady = response.data.state;
       })

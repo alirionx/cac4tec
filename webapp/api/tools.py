@@ -31,6 +31,20 @@ class helpers:
       return True
   
   #------------------------------------
+  def set_app_init(self, newPwd):
+    myDbTool = db_tool()
+    sqlRes = myDbTool.execute_select("SELECT pwdhash FROM pwd;")
+    if len(sqlRes) > 0:
+      return False
+    
+    try:
+      myDbTool.set_admin_pwd(newPwd)
+      return True 
+    except Exception as e:
+      print(e)
+      return False 
+
+  #------------------------------------
   def get_timestamp_str(self):
     now = datetime.datetime.now()
     timeStamp = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -155,6 +169,15 @@ class db_tool:
       return True
     else:
       return False
+
+  #--------------------------------------
+  def set_admin_pwd(self, pwd):
+    pwdHashIn = hashlib.md5( pwd.encode() ).hexdigest()
+    sqlRes = self.execute_delete("DELETE FROM pwd;")
+    sqlObj = {
+      "pwdhash": pwdHashIn
+    }
+    sqlRes = self.execute_insert("pwd", sqlObj)
 
   #--------------------------------------
   

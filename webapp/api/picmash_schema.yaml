@@ -16,7 +16,7 @@ tables:
         "id" INTEGER NOT NULL UNIQUE,
         "added" TEXT,
         "mime" TEXT,
-        "filepath" TEXT,
+        "imagepath" TEXT,
         "thumbpath" TEXT,
         "mash" INTEGER NOT NULL,
         "won"	INTEGER DEFAULT 0,

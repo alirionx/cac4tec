@@ -73,11 +73,11 @@ def api_home():
 
 
 #------------------------------------------
-@app.route('/api/app/ready', methods=['GET'])
-def achk_app_ready():
+@app.route('/api/app/init', methods=['GET'])
+def chk_app_ready():
   
   resObj = {
-    "path": "/api/app/ready",
+    "path": "/api/app/init",
     "method": "GET",
     "status": 200,
     "state": False,
@@ -91,6 +91,37 @@ def achk_app_ready():
   
   return jsonify(resObj), 200
 
+#------------------------------------------
+@app.route('/api/app/init', methods=['POST'])
+def set_app_init():
+  
+  try: session.pop('admin', None)
+  except: inf="nothing todo"
+  
+  status = 200
+  
+  resObj = {
+    "path": "/api/app/init",
+    "method": "POST"
+  }
+
+  objIn = request.get_json()
+  if "pwd" not in objIn:
+    status = 500
+    resObj["msg"] = "pwd input required" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  newPwd = objIn["pwd"]
+  myHelpers = helpers()
+  res = myHelpers.set_app_init(newPwd)
+  if not res:
+    status = 500
+    resObj["msg"] = "something went wrong" 
+    resObj["status"] = status
+    return jsonify(resObj), status
+
+  return jsonify(resObj), status
 
 #------------------------------------------
 @app.route('/api/auth', methods=['GET'])
