@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TGTDIR=$PWD/webapp/backend/dist
+TGTDIR=$PWD/webapp/backend/
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -16,5 +16,5 @@ fi
 cd webapp/spa
 npm install
 npm run build
-cp -R dist/* $TGTDIR/
+cp -R dist/ $TGTDIR/
 

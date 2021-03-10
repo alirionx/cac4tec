@@ -102,7 +102,7 @@ resource "aws_instance" "web" {
 
   key_name      = aws_key_pair.cac4tec.key_name
   ami           = "ami-0767046d1677be5a0"
-  instance_type = "t2.micro"
+  instance_type = "t2.small"
   tags = {
     #Name = each.key
     Name = "websrv_${count.index}"
